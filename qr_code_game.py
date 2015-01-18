@@ -126,7 +126,7 @@ class GraphSolver:
 
 		self._png_tools = PNGTools()
 		self._filename = filename
-		self._matrix = self._qr_code_generate.generate(message, filename_qr_code)
+		self._matrix = self._qr_code_generate.generate(message, filename)
 		self._g = Graph() # Directed Grid Graph
 		self._vertices = [] # #vertices = W*W
 		self._edges = [] # #edges = W*(W-1)*2*2
@@ -238,4 +238,4 @@ if __name__ == "__main__":
 	solver = GraphSolver(message, filename_qr_code)
 	solver.init()
 	solver.solve()
-	solver.draw_graph()
+	#solver.draw_graph()
