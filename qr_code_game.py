@@ -171,7 +171,7 @@ class GraphSolver:
 			node = self._g.vertex(tree[node])
 			path.append(tree[node])
 		
-		path = self._clean_path(path)
+		path = path[::-1]
 
 		for p in path:
 			r = p/len(self._matrix)
@@ -179,27 +179,6 @@ class GraphSolver:
 			self._vertices_color[self._vertices[r][c]] = GraphSolver.PATH_FLOAT if self._matrix[r][c] == GraphSolver.WHITE else GraphSolver.PATH_BLOCK_FLOAT
 
 		self._png_tools.generate_png_path(path, self._filename, GraphSolver.PREFIX_FILENAME_SOL + self._filename)
-
-	# O(len(path)) => O(n) but it practice nearly O(1)
-	def _clean_path(self, path):
-		flag = False
-		start = 0
-		while not flag:
-			if path[start] >= (len(self._matrix)-1)*len(self._matrix[0]) and path[start+1] >= (len(self._matrix)-1)*len(self._matrix[0]) and self._matrix[-1][path[start+1]%len(self._matrix[-1])] == '0':
-				start += 1
-			else:
-				flag = True
-		path = path[start:]
-		path = path[::-1]
-
-		flag = False
-		start = 0
-		while not flag:
-			if path[start] < len(self._matrix[0]) and path[start+1] < len(self._matrix[0]) and self._matrix[0][path[start+1]] == GraphSolver.WHITE:
-				start += 1
-			else:
-				flag = True
-		return path[start:]
 
 	# O(V^2)
 	def _generate_vertices(self):
@@ -251,10 +230,10 @@ class GraphSolver:
 			self._weights[e] = value
 
 if __name__ == "__main__":
-	message = 'In matters of truth and justice, there is no difference between large and small problems, for issues concerning the treatment of people are all the same. Albert Einstein'
+	message = 'DIEGO IS AWESOME !!!!'#'In matters of truth and justice, there is no difference between large and small problems, for issues concerning the treatment of people are all the same. Albert Einstein'
 	filename_qr_code = 'code.png'
 
 	solver = GraphSolver(message, filename_qr_code)
 	solver.init()
 	solver.solve()
-	solver.draw_graph()
+	#solver.draw_graph()
