@@ -21,14 +21,20 @@ The algorithm run in O(V^2 Lg(V))
 
 # Requirements :
 
-- ![graph-tools](http://graph-tool.skewed.de/)
+- [graph-tools](http://graph-tool.skewed.de/)
 - pypng
-- ![pyqrcode](https://github.com/mnooner256/pyqrcode) 
+- [pyqrcode](https://github.com/mnooner256/pyqrcode) 
 
 # Examples :
 
 - Small example
 
-![QR Code](http://img11.hostingpics.net/pics/549684scode.png)
+![QR Code](http://img11.hostingpics.net/pics/369238code.png)
 ![Solution QR Code](http://img11.hostingpics.net/pics/549684scode.png)
 ![Graph](http://img11.hostingpics.net/pics/813882graphcode.png)
+
+- Larger example
+
+![QR Code](http://img11.hostingpics.net/pics/514457code.png)
+![Solution QR Code](http://img11.hostingpics.net/pics/577126scode.png)
+![Graph](http://img11.hostingpics.net/pics/483599graphcode.png)
