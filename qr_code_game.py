@@ -251,7 +251,7 @@ class GraphSolver:
 			self._weights[e] = value
 
 if __name__ == "__main__":
-	message = 'DIEGO ROCKS !'
+	message = 'In matters of truth and justice, there is no difference between large and small problems, for issues concerning the treatment of people are all the same. Albert Einstein'
 	filename_qr_code = 'code.png'
 
 	solver = GraphSolver(message, filename_qr_code)
