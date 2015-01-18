@@ -17,4 +17,18 @@ And then, we create 2 subsets of vertices : the first one is the top vertices, t
 
 Finally, we use dijsktra for each pair of vertices between thoses subsets, and we keep the shortest one.
 
+The algorithm run in O(V^2 Lg(V))
 
+# Requirements :
+
+- ![graph-tools](http://graph-tool.skewed.de/)
+- pypng
+- ![pyqrcode](https://github.com/mnooner256/pyqrcode) 
+
+# Examples :
+
+- Small example
+
+![QR Code](http://img11.hostingpics.net/pics/549684scode.png)
+![Solution QR Code](http://img11.hostingpics.net/pics/549684scode.png)
+![Graph](http://img11.hostingpics.net/pics/813882graphcode.png)
