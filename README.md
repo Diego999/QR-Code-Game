@@ -17,7 +17,7 @@ And then, we create 2 subsets of vertices : the first one is the top vertices, t
 
 Finally, we use dijsktra for each pair of vertices between thoses subsets, and we keep the shortest one.
 
-The algorithm run in O(V^2 Lg(V))
+The algorithm runs in O(V^(3/2) Lg(V))
 
 # Requirements :
 

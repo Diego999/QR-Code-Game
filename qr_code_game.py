@@ -111,7 +111,7 @@ class GraphSolver:
 	PREFIX_FILENAME_SOL = 's_'
 	PREFIX_FILENAME_GRAPH = 'graph_'
 
-	#Let W defines the number of vertices in one size of the QRCode (Anyway, a QRCode is a square)
+	#Let W defines the number of vertices in one size of the QRCode (Anyway, a QRCode is a square) => V^1/2
 	#Let V defines the number of vertices
 	#Let E defines the number of edges
 
@@ -121,7 +121,7 @@ class GraphSolver:
 		self._png_tools = PNGTools()
 		self._filename = filename
 		self._matrix = self._qr_code_generate.generate(message, filename_qr_code)
-		self._g = Graph() #Grid Graph
+		self._g = Graph() # Directed Grid Graph
 		self._vertices = [] # #vertices = W*W
 		self._edges = [] # #edges = W*(W-1)*2*2
 		self._start_vertices = [] # #vertices = W
@@ -140,17 +140,17 @@ class GraphSolver:
 	def draw_graph(self):
 		graph_draw(self._g, vertex_text=self._g.vertex_index, pos=self._vertices_pos, vertex_fill_color=self._vertices_color, vertex_size=30, edge_text=self._weights, edge_pen_width=4, output_size=(1024*2,2*1024), edge_text_distance=0, edge_font_size=10, vertex_font_size=10, output=GraphSolver.PREFIX_FILENAME_GRAPH + self._filename)
 
-	# O(V^V LgV)
+	# O(V^(3/2) LgV)
 	def solve(self):
 		min_dist = 100000
 		pair_vertex = ()
 		tree = None
-		# V loops, => O(V^2 lgV)
+		# V^1/2 loops, => O(V^(3/2) lgV)
 		for start_vertex in self._start_vertices:
 			# O(V lgV), cf Documentation
 			dist, pred = dijkstra_search(self._g, start_vertex, self._weights)
 
-			# O(V)
+			# O(V^1/2)
 			for exit_vertex in self._exit_vertices:
 				current_dist = dist[exit_vertex]
 				r = int(start_vertex)/len(self._matrix)
@@ -192,7 +192,7 @@ class GraphSolver:
 				else:
 					self._vertices_color[self._vertices[i][j]] = GraphSolver.BLACK_FLOAT
 		
-	# O(W*(W-1)*2*2) => O(W^2) => O(V^2)
+	# O(W*(W-1)*2*2) => O(W^2) => O(V)
 	def _generate_edges(self):
 		for i in range(0,len(self._matrix[0])):
 			self._edges.append([])
@@ -200,7 +200,7 @@ class GraphSolver:
 				self._edges[-1].append([])
 				self._compute_add_value_edge(i, j)
 
-	# O(2*W) => O(W)
+	# O(2*W) => O(V^1/2)
 	def _find_start_end_vertices(self):
 		for j in range(0, len(self._matrix[0])):
 			self._start_vertices.append(self._vertices[0][j])
@@ -230,7 +230,7 @@ class GraphSolver:
 			self._weights[e] = value
 
 if __name__ == "__main__":
-	message = 'DIEGO IS AWESOME !!!!'#'In matters of truth and justice, there is no difference between large and small problems, for issues concerning the treatment of people are all the same. Albert Einstein'
+	message = 'In matters of truth and justice, there is no difference between large and small problems, for issues concerning the treatment of people are all the same. Albert Einstein'
 	filename_qr_code = 'code.png'
 
 	solver = GraphSolver(message, filename_qr_code)
