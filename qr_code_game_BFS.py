@@ -1,104 +1,6 @@
-import pyqrcode
-import png
 from graph_tool.all import *
-
-class PNGTools:
-
-	BLACK_RGB = [0, 0, 0]
-	WHITE_RGB = [255, 255, 255]
-
-	MODIFY_PATH_COLOR_R = 0
-	MODIFY_PATH_COLOR_G = 255
-	MODIFY_PATH_COLOR_B = 0
-
-	MODIFY_BLOCK_COLOR_R = 0
-	MODIFY_BLOCK_COLOR_G = 0
-	MODIFY_BLOCK_COLOR_B = 255
-
-	BORDER_FACTOR = 2
-	SIZE_RGB = 3
-
-	"""
-		Trim the original QR Code png picture
-	"""
-	def trim_border(self, filename, thickness):
-		data = []
-		for p in self._read_file(filename)[2]: # [2] = data
-			data.append(p[thickness:-thickness])
-		data = data[thickness:-thickness]
-		self._write_file(filename, self._read_pixels(data), len(data))
-
-	"""
-		Generate the modify QR Code png picture with the solution
-	"""
-	def generate_png_path(self, path, filename_in, filename_out):
-		data = []
-		for p in self._read_file(filename_in)[2]:#[2] = data
-			data.append(p)
-		self._write_file(filename_out, self._modify_pixels_by(path, data), len(data))
-
-	def _read_file(self, filename):
-		return png.Reader(filename).read()
-
-	def _write_file(self, filename, data, width):
-		f = open(filename, 'wb')
-		png.Writer(width, len(data)).write(f, data)
-		f.close()
-
-	"""
-		Transform the original GRAY-BIT code of the png picture to a RGB one
-	"""
-	def _read_pixels(self, data):
-		data_output = []
-		for d in data:
-			row = []
-			for dd in d:
-				if dd == 0:
-					row.extend(PNGTools.BLACK_RGB)
-				else:
-					row.extend(PNGTools.WHITE_RGB)
-			data_output.append(tuple(row))
-		return data_output
-
-	"""
-		Draw the solution
-	"""
-	def _modify_pixels_by(self, pixels, data):
-		width = len(list(data[0]))/PNGTools.SIZE_RGB
-		height = len(data)
-		for p in pixels:
-			row = p/height
-			col = PNGTools.SIZE_RGB*(p%width)
-			new_row = list(data[row]) # The given data by pypng is in tuple and to modify a tuple, we have to convert it into list and then back to tuple
-			
-			#If it is a BLOCK case, we color it with the specified color, otherwise, we color the EMPTY case with the specified one
-			if new_row[col+0] == PNGTools.BLACK_RGB[0] and new_row[col+1] == PNGTools.BLACK_RGB[1] and new_row[col+2] == PNGTools.BLACK_RGB[2]:
-				new_row[col+0] = PNGTools.MODIFY_BLOCK_COLOR_R;new_row[col+1] = PNGTools.MODIFY_BLOCK_COLOR_G;new_row[col+2] = PNGTools.MODIFY_BLOCK_COLOR_B
-			else:
-				new_row[col+0] = PNGTools.MODIFY_PATH_COLOR_R;new_row[col+1] = PNGTools.MODIFY_PATH_COLOR_G;new_row[col+2] = PNGTools.MODIFY_PATH_COLOR_B				
-			data[row] = tuple(new_row)
-		return data
-
-class QRCodeGenerator:
-
-	BOUND = 1
-	SEPARATOR = '\n'
-
-	def __init__(self):
-		self._png_tools = PNGTools()
-
-	def generate(self, message, filename):
-		qrcode =  pyqrcode.create(message)
-		qrcode.png(filename)
-		self._png_tools.trim_border(filename, QRCodeGenerator.BOUND)
-		return self._transform_to_matrix(qrcode)
-
-	def _transform_to_matrix(self, qrcode):
-		matrix = []
-		for r in qrcode.text().split(QRCodeGenerator.SEPARATOR):
-			matrix.append(r[QRCodeGenerator.BOUND:-QRCodeGenerator.BOUND])
-		matrix = matrix[QRCodeGenerator.BOUND:-QRCodeGenerator.BOUND]
-		return matrix
+from pngtools import PNGTools
+from qrcodegenerator import QRCodeGenerator
 
 class GraphSolver:
 
@@ -195,7 +97,7 @@ class GraphSolver:
 				self._vertices_pos[self._vertices[i][j]] = (j, i)
 				self._vertices_color[self._vertices[i][j]] = GraphSolver.WHITE_FLOAT if self._matrix[i][j] == GraphSolver.WHITE else GraphSolver.BLACK_FLOAT
 		
-	# O(V*(V-1)*2*2) => O(V^2) => O(V^2)
+	# O(W*(W-1)*2*2) => O(W^2) => O(V)
 	def _generate_edges(self):
 		for i in range(0,len(self._matrix[0])):
 			self._edges.append([])
@@ -232,7 +134,7 @@ class GraphSolver:
 			self._weights[e] = value
 
 if __name__ == "__main__":
-	message = 'In matters of truth and justice, there is no difference between large and small problems, for issues concerning the treatment of people are all the same. Albert Einstein'
+	message = 'Test'#In matters of truth and justice, there is no difference between large and small problems, for issues concerning the treatment of people are all the same. Albert Einstein'
 	filename_qr_code = 'code.png'
 
 	solver = GraphSolver(message, filename_qr_code)
