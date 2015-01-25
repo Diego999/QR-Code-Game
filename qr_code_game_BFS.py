@@ -88,7 +88,9 @@ class SimpleGraph:
 		return v
 
 	def add_edge(self, u, v, w):
-		self._edges[u].append(Edge(u, v, w))
+		e = Edge(u, v, w)
+		self._edges[u].append(e)
+		return e
 
 	def breadth_first_search(self, s, queue_extra_content=[]):
 		for v in self._vertices:
@@ -159,7 +161,33 @@ class SimpleGraphSolver:
 		self._generate_edges()
 		self._find_start_end_vertices()
 
-		print self._g
+	def solve(self):
+		whites = []
+		blacks = []
+
+		for j in range(0, len(self._matrix[0])):
+			if self._matrix[0][j] == GraphSolver.WHITE:
+				whites.append(self._vertices[0][j])
+			else:
+				blacks.append(self._vertices[0][j])
+
+		tree = self._g.breadth_first_search(whites[0], whites+blacks)
+
+		good_edges = []
+		bad_edges = []
+		for i in range(0, len(self._edges)):
+			for j in range(0, len(self._edges[i])):
+				for e in self._edges[i][j]:
+					kk += 1
+					u = e.get_u()
+					v = e.get_v()
+					w = e.get_w()
+					if v.get_d() == u.get_d() + w:
+						good_edges.append(e)
+					else:
+						bad_edges.append(e)
+
+		print len(good_edges)
 
 	# O(V^2)
 	def _generate_vertices(self):
@@ -209,3 +237,4 @@ if __name__ == "__main__":
 
 	solver = SimpleGraphSolver(message, filename_qr_code)
 	solver.init()
+	solver.solve()
