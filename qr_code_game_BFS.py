@@ -1,28 +1,65 @@
-from graph_tool.all import *
+class Edge:
 
-from graphsolver import GraphSolver
+		def __init__(self, u, v, w):
+			self._u = u
+			self._v = v
+			self._w = w
 
-class GraphSolverBFS(GraphSolver):
+		def set_w(self, w):
+			self._w = w
 
-	EMPTY_WEIGHT_EDGE = 0
-	FULL_WEIGHT_EDGE = 1
+		def get_u(self):
+			return self._u
 
-	def __init__(self, message, filename):
-		super(GraphSolverBFS, self).__init__(message, filename)
+		def get_v(self):
+			return self._v
 
-	def init(self):
-		super(GraphSolverBFS, self).init(GraphSolverBFS.EMPTY_WEIGHT_EDGE, GraphSolverBFS.FULL_WEIGHT_EDGE)
+		def get_w(self):
+			return self._w
 
-	def solve(self):
-		pass
-		
+		def _to_string(self):
+			return str(self._u) + ' -' + str(self._w) + '-> ' + str(self._v)
 
+		def __str__(self):
+			return self._to_string()
+
+		def __repr__(self):
+			return self._to_string()
+
+class SimpleGraph:
+
+	def __init__(self):
+		self._vertices = []
+		self._edges = {}
+
+	def add_vertex(self, v):
+		self._vertices.append(v)
+
+	def add_edge(self, u, v, w):
+		e = Edge(u, v, w)
+		if u not in self._edges:
+			self._edges[u] = [e]
+		else:
+			self._edges[u].append(e)
+
+	def _to_string(self):
+		s = ''
+		for v in self._vertices:
+			s += str(v) + ' -> '
+			if v in self._edges:
+				for e in self._edges[v]:
+					s += str(e) + ' |'
+
+			s = s[:-1] + '\n'
+		return s
+
+	def __str__(self):
+		return self._to_string()
+
+	def __repr__(self):
+		return self._to_string()
 
 if __name__ == "__main__":
-	message = 'In matters of truth and justice, there is no difference between large and small problems, for issues concerning the treatment of people are all the same. Albert Einstein'
-	filename_qr_code = 'code.png'
+	g = SimpleGraph()
 
-	solver = GraphSolverBFS(message, filename_qr_code)
-	solver.init()
-	solver.solve()
-	#solver.draw_graph()
+
