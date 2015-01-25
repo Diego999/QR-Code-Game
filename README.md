@@ -1,7 +1,19 @@
 # QR-Code-Game
 Find the shortest path starting from the top of the QR Code to the bottom, in a way to minimize the number of black cases and then, the number of white cases.
 
-# Algorithm
+# Algorithm 1
+
+It consider the QR Code as a grid graph and where each pixel is a vertice.
+Each vertex has an edge to its neighbors. The value of a edge is as follows :
+
+- If current case is a white case and the neighbor case is a black one -> 1
+- If current case is a white case and also its neighbor -> 0 
+- If current case is a black case and the neighbor case is a white one -> 0
+- If current case is a black case and also its neighbor -> 1
+
+It simply uses 0-1 BFS and get a minimum black cases paths in O(V+E). However, I didn't get time to find the BEST path between several minimum black cases paths, but it is MUCH faster than algorithm 2.
+
+# Algorithm 2
 
 It consider the QR Code as a grid graph and where each pixel is a vertice.
 Each vertex has an edge to its neighbors. The value of a edge is as follows :
