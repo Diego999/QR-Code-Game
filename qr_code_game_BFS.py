@@ -1,6 +1,6 @@
 from pngtools import PNGTools
 from qrcodegenerator import QRCodeGenerator
-from Queue import Queue
+from collections import deque
 
 from graphsolver import GraphSolver
 
@@ -80,6 +80,7 @@ class SimpleGraph:
 	def __init__(self):
 		self._vertices = []
 		self._edges = {}
+		self._start = 0
 
 	def add_vertex(self, v):
 		v = Vertex(v)
@@ -92,27 +93,34 @@ class SimpleGraph:
 		self._edges[u].append(e)
 		return e
 
-	def breadth_first_search(self, s, queue_extra_content=[]):
+	def remove_edge(self, e):
+		u = e.get_u()
+		self._edges[u].remove(e)
+
+	def breadth_first_search(self,queue_content = []):
 		for v in self._vertices:
 			v.set_p(Vertex.NO_PARENT)
 			v.set_d(Vertex.NO_DISTANCE)
 
-		q = Queue()
-		q.put(s)
-		s.set_d(0)
-		for v in queue_extra_content:
-			q.put(v)
-		
+		q = deque()
+		for v in queue_content:
+			q.append(v)
+			v.set_d(0)
+
 		tree = []
-		while not q.empty():
-			u = q.get()
+		while q:
+			u = q.popleft()
 			for e in self._edges[u]:
 				v = e.get_v()
 				if v.get_d() == Vertex.NO_DISTANCE:
 					v.set_d(u.get_d() + e.get_w())
 					v.set_p(u)
 					tree.append(e)
-					q.put(v)
+					if e.get_w() == 0:
+						q.appendleft(v)
+					else:
+						q.append(v)
+
 		return tree
 
 	def get_vertices(self):
@@ -138,6 +146,8 @@ class SimpleGraph:
 	def __repr__(self):
 		return self._to_string()
 
+from random import shuffle
+
 class SimpleGraphSolver:
 
 	EMPTY_WEIGHT_EDGE = 0
@@ -161,6 +171,7 @@ class SimpleGraphSolver:
 		self._generate_edges()
 		self._find_start_end_vertices()
 
+	# O(V)
 	def solve(self):
 		whites = []
 		blacks = []
@@ -170,24 +181,43 @@ class SimpleGraphSolver:
 				whites.append(self._vertices[0][j])
 			else:
 				blacks.append(self._vertices[0][j])
+		tree = self._g.breadth_first_search(whites+blacks)
 
-		tree = self._g.breadth_first_search(whites[0], whites+blacks)
-
+		'''
+		Suppose to find the best path between several minimum black cases paths. Doesn't work
 		good_edges = []
 		bad_edges = []
 		for i in range(0, len(self._edges)):
 			for j in range(0, len(self._edges[i])):
 				for e in self._edges[i][j]:
-					kk += 1
-					u = e.get_u()
-					v = e.get_v()
-					w = e.get_w()
-					if v.get_d() == u.get_d() + w:
+					if e.get_v().get_d() == e.get_u().get_d() + e.get_w():
 						good_edges.append(e)
 					else:
 						bad_edges.append(e)
 
-		print len(good_edges)
+		for e in bad_edges:
+			self._g.remove_edge(e)
+		for e in good_edges:
+		 	e.set_w(SimpleGraphSolver.FULL_WEIGHT_EDGE)
+
+		tree = self._g.breadth_first_search(whites+blacks)'''
+
+		v_min = self._vertices[-1][0]
+		min_dist = v_min.get_d()
+		for v in self._vertices[-1]:
+			if v.get_d() < min_dist:
+				v_min = v
+				min_dist = v.get_d()
+
+		v = v_min
+		path = [v.get_id()]
+		while v.get_p() != Vertex.NO_PARENT:
+			path.append(v.get_p().get_id())
+			v = v.get_p()
+
+		path = path[::-1]
+		print path
+		self._png_tools.generate_png_path(path, self._filename, GraphSolver.PREFIX_FILENAME_SOL + self._filename)
 
 	# O(V^2)
 	def _generate_vertices(self):
@@ -232,7 +262,7 @@ class SimpleGraphSolver:
 			self._edges[-1][-1].append(e)
 
 if __name__ == "__main__":
-	message = 'D'#In matters of truth and justice, there is no difference between large and small problems, for issues concerning the treatment of people are all the same. Albert Einstein'
+	message = 'In matters of truth and justice, there is no difference between large and small problems, for issues concerning the treatment of people are all the same. Albert Einstein'
 	filename_qr_code = 'code.png'
 
 	solver = SimpleGraphSolver(message, filename_qr_code)

@@ -20,4 +20,5 @@ class QRCodeGenerator:
 		for r in qrcode.text().split(QRCodeGenerator.SEPARATOR):
 			matrix.append(r[QRCodeGenerator.BOUND:-QRCodeGenerator.BOUND])
 		matrix = matrix[QRCodeGenerator.BOUND:-QRCodeGenerator.BOUND]
+		#matrix = ['01100','11000','00010','01110','00101']
 		return matrix
