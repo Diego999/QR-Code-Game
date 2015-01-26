@@ -216,7 +216,7 @@ class SimpleGraphSolver:
 			v = v.get_p()
 
 		path = path[::-1]
-		print path
+		
 		self._png_tools.generate_png_path(path, self._filename, GraphSolver.PREFIX_FILENAME_SOL + self._filename)
 
 	# O(V^2)
